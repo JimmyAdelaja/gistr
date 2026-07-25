@@ -17,6 +17,7 @@ install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/"
         DESTINATION bin
         FILES_MATCHING 
         PATTERN "*.dll"
+        PATTERN "platforms/*"
         PATTERN "plugins/*"
         PATTERN "qml/*"
         PATTERN "translations/*"
