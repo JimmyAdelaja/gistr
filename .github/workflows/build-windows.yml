@@ -47,29 +47,23 @@ jobs:
         run: |
           cmake --build build --config Release
 
-      - name: Collect Qt Dependencies (windeployqt)
+      - name: Run windeployqt
+        shell: pwsh
         run: |
-          # Create a clean release output folder
-          New-Item -ItemType Directory -Path dist
+          $exePath = Get-ChildItem -Path build -Filter "appgistr.exe" -Recurse | Select-Object -First 1 -ExpandProperty FullName
+          if (-not $exePath) { throw "appgistr.exe not found!" }
           
-          # Copy the compiled executable
-          Copy-Item build/src/app/appgistr.exe -Destination dist/
+          windeployqt --qmldir src/app/qml "$exePath"
 
-          # Run windeployqt to automatically bundle required Qt modules and QML dependencies
-          windeployqt --qmldir src/app/qml dist/appgistr.exe
-
-      - name: Package Dist Folder into Zip
-        shell: powershell
+      - name: Create MSI Installer with CPack
         run: |
-          Compress-Archive -Path dist\* -DestinationPath appgistr-windows-x64.zip
+          cd build
+          cpack -G WIX -C Release
 
-      - name: Create GitHub Release
+      - name: Upload MSI to GitHub Release
         uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
-          name: Release ${{ github.event.inputs.tag_name || github.ref_name }}
-          files: appgistr-windows-x64.zip
-          draft: false
-          prerelease: false
+          files: build/*.msi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

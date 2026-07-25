@@ -10,3 +10,16 @@ find_package(Qt6 REQUIRED COMPONENTS Quick Sql)
 qt_standard_project_setup(REQUIRES 6.8)
 
 add_subdirectory(src/app)
+
+# Install targets so CPack knows what to put in the installer
+install(TARGETS appgistr DESTINATION bin)
+install(DIRECTORY src/app/qml DESTINATION bin/qml OPTIONAL)
+
+# Configure CPack for WiX MSI generation
+set(CPACK_GENERATOR "WIX")
+set(CPACK_PACKAGE_NAME "appgistr")
+set(CPACK_PACKAGE_VENDOR "OrgCorp")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_WIX_UPGRADE_GUID "10fb36de-b1b7-4b13-a770-f581f9919926") # Generate a unique GUID
+
+include(CPack)
