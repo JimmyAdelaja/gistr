@@ -20,6 +20,7 @@ install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/"
         PATTERN "plugins/*"
         PATTERN "qml/*"
         PATTERN "translations/*"
+        PATTERN "_CPack_Packages" EXCLUDE
 )
 
 # Configure CPack for WiX MSI generation
