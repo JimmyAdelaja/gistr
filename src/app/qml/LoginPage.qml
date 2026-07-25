@@ -8,36 +8,36 @@ Rectangle {
     height: 768
     visible: true
 
-    // Background: Grid pattern simulation
-    color: "#f4f6f9"
+    // // Background: Grid pattern simulation
+    // color: "#f4f6f9"
 
-    Grid {
-        id: grid
-        opacity: 0.05
-        anchors.centerIn: parent
+    // Grid {
+    //     id: grid
+    //     opacity: 0.05
+    //     anchors.centerIn: parent
 
-        // 1. Define your fixed cell dimensions
-        readonly property real cellWidth: 40
-        readonly property real cellHeight: 40
+    //     // 1. Define your fixed cell dimensions
+    //     readonly property real cellWidth: 40
+    //     readonly property real cellHeight: 40
 
-        // 2. Dynamically calculate columns and rows based on available space
-        columns: Math.ceil(parent.width / cellWidth)
-        rows: Math.ceil(parent.height / cellHeight)
+    //     // 2. Dynamically calculate columns and rows based on available space
+    //     columns: Math.ceil(parent.width / cellWidth)
+    //     rows: Math.ceil(parent.height / cellHeight)
 
-        Repeater {
-            // 3. Multiply columns by rows to get the total needed squares
-            model: grid.columns * grid.rows
+    //     Repeater {
+    //         // 3. Multiply columns by rows to get the total needed squares
+    //         model: grid.columns * grid.rows
 
-            Rectangle {
-                // 4. Set the cells to the fixed sizes
-                width: grid.cellWidth
-                height: grid.cellHeight
-                color: "transparent"
-                border.color: "#000000"
-                border.width: 1
-            }
-        }
-    }
+    //         Rectangle {
+    //             // 4. Set the cells to the fixed sizes
+    //             width: grid.cellWidth
+    //             height: grid.cellHeight
+    //             color: "transparent"
+    //             border.color: "#000000"
+    //             border.width: 1
+    //         }
+    //     }
+    // }
 
     // The Deep Ambient Glow Cloud
     Item {
@@ -121,7 +121,7 @@ Rectangle {
 
                     Image {
                         id: logo
-                        source: "qrc:/Assets/icon-no-bg.png"
+                        source: "qrc:/assets/icon-no-bg.png"
                         height: 152
                         fillMode: Image.PreserveAspectFit
                         anchors.horizontalCenter: parent.horizontalCenter
@@ -149,7 +149,7 @@ Rectangle {
                         // User Icon Placeholder
                         Image {
                             id: usernameIcon
-                            source:"qrc:/Assets/icons8-user-male-96.png"
+                            source:"qrc:/assets/icons8-user-male-96.png"
                             width: 20
                             height: 20
                             // color: "#2d3748"
@@ -181,7 +181,7 @@ Rectangle {
                         // Key Icon Placeholder
                         Image {
                             id: passwordIcon
-                            source:"qrc:/Assets/icons8-password-96.png"
+                            source:"qrc:/assets/icons8-password-96.png"
                             width: 20
                             height: 20
                             // color: "#2d3748"
@@ -231,7 +231,11 @@ Rectangle {
                         }
 
                         onClicked: {
-                            console.log("Logging in with:", usernameInput.text)
+                            if (usernameInput.text !== "" && passwordInput.text !== "") {
+                              authCtrl.login(usernameInput.text, passwordInput.text)
+                            } else {
+                              console.log("Form submission caught: Missing input targets.")
+                            }
                         }
                     }
                 }
