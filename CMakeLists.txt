@@ -13,7 +13,14 @@ add_subdirectory(src/app)
 
 # Install targets so CPack knows what to put in the installer
 install(TARGETS appgistr DESTINATION bin)
-install(DIRECTORY src/app/qml DESTINATION bin/qml OPTIONAL)
+install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/"
+        DESTINATION bin
+        FILES_MATCHING 
+        PATTERN "*.dll"
+        PATTERN "plugins/*"
+        PATTERN "qml/*"
+        PATTERN "translations/*"
+)
 
 # Configure CPack for WiX MSI generation
 set(CPACK_GENERATOR "WIX")
