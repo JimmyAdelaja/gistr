@@ -53,7 +53,8 @@ jobs:
           $exePath = Get-ChildItem -Path build -Filter "appgistr.exe" -Recurse | Select-Object -First 1 -ExpandProperty FullName
           if (-not $exePath) { throw "appgistr.exe not found!" }
           
-          windeployqt --qmldir src/app/qml "$exePath"
+          # Added --compiler-runtime to bundle MSVC DLLs alongside QML plugins
+          windeployqt --qmldir src/app/qml --compiler-runtime "$exePath"
 
       - name: Create MSI Installer with CPack
         run: |
