@@ -1,0 +1,75 @@
+name: Build and Release Windows Executable
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name for the release (e.g., v1.0.0)'
+        required: true
+        default: 'v0.1.0'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Developer Command Prompt for MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install Qt 6
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.8.0'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2019_64'
+          cache: true
+
+      - name: Install Ninja
+        uses: ashutoshvarma/setup-ninja@v1
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -G "Ninja" `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_PREFIX_PATH="$env:Qt6_DIR"
+
+      - name: Build Application
+        run: |
+          cmake --build build --config Release
+
+      - name: Collect Qt Dependencies (windeployqt)
+        run: |
+          # Create a clean release output folder
+          New-Item -ItemType Directory -Path dist
+          
+          # Copy the compiled executable
+          Copy-Item build/src/app/appgistr.exe -Destination dist/
+
+          # Run windeployqt to automatically bundle required Qt modules and QML dependencies
+          windeployqt --qmldir src/app/qml dist/appgistr.exe
+
+      - name: Package Dist Folder into Zip
+        shell: powershell
+        run: |
+          Compress-Archive -Path dist\* -DestinationPath appgistr-windows-x64.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
+          name: Release ${{ github.event.inputs.tag_name || github.ref_name }}
+          files: appgistr-windows-x64.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
