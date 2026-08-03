@@ -32,4 +32,8 @@ set(CPACK_PACKAGE_VERSION "1.0.0")
 set(CPACK_WIX_UPGRADE_GUID "10fb36de-b1b7-4b13-a770-f581f9919926")
 set(CPACK_PACKAGE_EXECUTABLES "appgistr" "Gistr")
 
+if(WIN32)
+    include(InstallRequiredSystemLibraries)
+endif()
+
 include(CPack)
