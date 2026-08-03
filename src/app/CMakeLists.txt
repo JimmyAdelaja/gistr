@@ -37,3 +37,16 @@ install(TARGETS appgistr
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+# Automatically deploy Qt runtime (DLLs, platform plugins, QML modules)
+# alongside the installed exe — runs during `cmake --install` / `cpack`,
+# so it always targets the real install location, no manual windeployqt needed.
+if(WIN32)
+    qt_generate_deploy_app_script(
+        TARGET appgistr
+        OUTPUT_SCRIPT deploy_script
+        NO_UNSUPPORTED_PLATFORM_ERROR
+        NO_TRANSLATIONS
+    )
+    install(SCRIPT ${deploy_script})
+endif()
